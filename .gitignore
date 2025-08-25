@@ -1,0 +1,52 @@
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Build
+**/target/
+**/build/
+*.jar
+*.war
+*.ear
+*.class
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.h2.db
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Maven / Gradle
+.mvn/
+mvnw
+mvnw.cmd
+.gradle/
+
+# Spring Boot
+*.pid
+application-*.properties
+
+# Spring Modulith generated files
+**/generated-spring-modulith/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Environment files
+.env
+.env.local
