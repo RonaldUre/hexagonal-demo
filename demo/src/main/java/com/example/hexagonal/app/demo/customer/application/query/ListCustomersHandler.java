@@ -1,12 +1,16 @@
 package com.example.hexagonal.app.demo.customer.application.query;
 
-import com.example.hexagonal.app.demo.customer.application.ports.CustomerRepository;
+import com.example.hexagonal.app.demo.customer.application.ports.out.CustomerRepository;
 import com.example.hexagonal.app.demo.customer.domain.Customer;
 
 import java.util.List;
 import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
-public class ListCustomersHandler {
+import com.example.hexagonal.app.demo.customer.application.ports.in.ListCustomersUseCase;
+
+@Transactional(readOnly = true)
+public class ListCustomersHandler implements ListCustomersUseCase {
 
     private final CustomerRepository repository;
 

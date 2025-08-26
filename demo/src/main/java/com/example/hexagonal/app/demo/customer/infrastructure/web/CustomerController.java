@@ -5,11 +5,11 @@ import com.example.hexagonal.app.demo.customer.application.command.UpdateCustome
 import com.example.hexagonal.app.demo.customer.application.query.CheckEmailAvailabilityQuery;
 import com.example.hexagonal.app.demo.customer.application.query.GetCustomerByIdQuery;
 import com.example.hexagonal.app.demo.customer.application.query.ListCustomersQuery;
-import com.example.hexagonal.app.demo.customer.application.service.RegisterCustomerService;
-import com.example.hexagonal.app.demo.customer.application.service.UpdateCustomerService;
-import com.example.hexagonal.app.demo.customer.application.query.GetCustomerByIdHandler;
-import com.example.hexagonal.app.demo.customer.application.query.ListCustomersHandler;
-import com.example.hexagonal.app.demo.customer.application.query.CheckEmailAvailabilityHandler;
+import com.example.hexagonal.app.demo.customer.application.ports.in.RegisterCustomerUseCase;
+import com.example.hexagonal.app.demo.customer.application.ports.in.UpdateCustomerUseCase;
+import com.example.hexagonal.app.demo.customer.application.ports.in.GetCustomerByIdUseCase;
+import com.example.hexagonal.app.demo.customer.application.ports.in.ListCustomersUseCase;
+import com.example.hexagonal.app.demo.customer.application.ports.in.CheckEmailAvailabilityUseCase;
 import com.example.hexagonal.app.demo.customer.domain.Customer;
 import com.example.hexagonal.app.demo.customer.infrastructure.web.dto.CustomerResponse;
 import com.example.hexagonal.app.demo.customer.infrastructure.web.dto.RegisterCustomerRequest;
@@ -25,18 +25,18 @@ import java.util.List;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final RegisterCustomerService registerCustomerService;
-    private final UpdateCustomerService updateCustomerService;
-    private final GetCustomerByIdHandler getCustomerByIdHandler;
-    private final ListCustomersHandler listCustomersHandler;
-    private final CheckEmailAvailabilityHandler checkEmailAvailabilityHandler;
+    private final RegisterCustomerUseCase registerCustomerService;
+    private final UpdateCustomerUseCase updateCustomerService;
+    private final GetCustomerByIdUseCase getCustomerByIdHandler;
+    private final ListCustomersUseCase listCustomersHandler;
+    private final CheckEmailAvailabilityUseCase checkEmailAvailabilityHandler;
 
     public CustomerController(
-            RegisterCustomerService registerCustomerService,
-            UpdateCustomerService updateCustomerService,
-            GetCustomerByIdHandler getCustomerByIdHandler,
-            ListCustomersHandler listCustomersHandler,
-            CheckEmailAvailabilityHandler checkEmailAvailabilityHandler) {
+            RegisterCustomerUseCase registerCustomerService,
+            UpdateCustomerUseCase updateCustomerService,
+            GetCustomerByIdUseCase getCustomerByIdHandler,
+            ListCustomersUseCase listCustomersHandler,
+            CheckEmailAvailabilityUseCase checkEmailAvailabilityHandler) {
         this.registerCustomerService = registerCustomerService;
         this.updateCustomerService = updateCustomerService;
         this.getCustomerByIdHandler = getCustomerByIdHandler;

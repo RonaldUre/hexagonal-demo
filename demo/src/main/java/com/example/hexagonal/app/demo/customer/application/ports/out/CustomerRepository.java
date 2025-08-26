@@ -1,4 +1,4 @@
-package com.example.hexagonal.app.demo.customer.application.ports;
+package com.example.hexagonal.app.demo.customer.application.ports.out;
 
 import com.example.hexagonal.app.demo.customer.domain.Customer;
 import com.example.hexagonal.app.demo.customer.domain.model.vo.CustomerId;

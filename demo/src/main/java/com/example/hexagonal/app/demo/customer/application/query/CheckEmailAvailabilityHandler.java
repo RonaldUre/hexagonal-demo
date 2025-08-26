@@ -1,10 +1,14 @@
 package com.example.hexagonal.app.demo.customer.application.query;
 
-import com.example.hexagonal.app.demo.customer.application.ports.CustomerRepository;
+import com.example.hexagonal.app.demo.customer.application.ports.out.CustomerRepository;
 
 import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
-public class CheckEmailAvailabilityHandler {
+import com.example.hexagonal.app.demo.customer.application.ports.in.CheckEmailAvailabilityUseCase;
+
+@Transactional(readOnly = true)
+public class CheckEmailAvailabilityHandler implements CheckEmailAvailabilityUseCase {
 
     private final CustomerRepository repository;
 

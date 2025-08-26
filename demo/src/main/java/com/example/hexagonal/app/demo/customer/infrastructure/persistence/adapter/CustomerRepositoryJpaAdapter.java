@@ -1,22 +1,22 @@
 package com.example.hexagonal.app.demo.customer.infrastructure.persistence.adapter;
 
-import com.example.hexagonal.app.demo.customer.application.ports.CustomerRepository;
+import com.example.hexagonal.app.demo.customer.application.errors.EmailAlreadyInUseException;
+import com.example.hexagonal.app.demo.customer.application.ports.out.CustomerRepository;
 import com.example.hexagonal.app.demo.customer.domain.Customer;
 import com.example.hexagonal.app.demo.customer.domain.model.vo.CustomerId;
 import com.example.hexagonal.app.demo.customer.domain.model.vo.Email;
 import com.example.hexagonal.app.demo.customer.infrastructure.mapper.CustomerMapper;
 import com.example.hexagonal.app.demo.customer.infrastructure.persistence.entity.JpaCustomerEntity;
 import com.example.hexagonal.app.demo.customer.infrastructure.persistence.repository.CustomerJpaRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional(readOnly = true)
 public class CustomerRepositoryJpaAdapter implements CustomerRepository {
 
     private final CustomerJpaRepository jpa;
@@ -26,18 +26,23 @@ public class CustomerRepositoryJpaAdapter implements CustomerRepository {
     }
 
     @Override
-    @Transactional
     public Customer save(Customer customer) {
-        JpaCustomerEntity entity = CustomerMapper.toEntity(customer);
-        JpaCustomerEntity saved = jpa.save(entity);
+        try {
+            JpaCustomerEntity entity = CustomerMapper.toEntity(customer);
+            JpaCustomerEntity saved = jpa.save(entity);
 
-        // Si era nuevo, asigna el id al aggregate existente
-        if (customer.id() == null) {
-            customer.assignId(CustomerId.of(saved.getId()));
+            // Si era nuevo, asigna el id al aggregate existente
+            if (customer.id() == null) {
+                customer.assignId(CustomerId.of(saved.getId()));
+            }
+
+            // Devolvemos el aggregate rehidratado para incluir created_at de DB
+            return CustomerMapper.toAggregate(saved);
+        } catch (DataIntegrityViolationException ex) {
+            // Defensive translation for unique email index "uk_customers_email"
+            // Avoid leaking Spring exceptions to the application layer
+            throw new EmailAlreadyInUseException(customer.email().asString());
         }
-
-        // Devolvemos el aggregate rehidratado para incluir created_at de DB
-        return CustomerMapper.toAggregate(saved);
     }
 
     @Override

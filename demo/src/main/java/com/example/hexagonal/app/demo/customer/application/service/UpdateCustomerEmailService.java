@@ -1,13 +1,15 @@
 package com.example.hexagonal.app.demo.customer.application.service;
 
 import com.example.hexagonal.app.demo.customer.application.command.UpdateCustomerEmailCommand;
-import com.example.hexagonal.app.demo.customer.application.ports.CustomerRepository;
+import com.example.hexagonal.app.demo.customer.application.errors.CustomerNotFoundException;
+import com.example.hexagonal.app.demo.customer.application.errors.EmailAlreadyInUseException;
+import com.example.hexagonal.app.demo.customer.application.ports.out.CustomerRepository;
 import com.example.hexagonal.app.demo.customer.domain.Customer;
 import com.example.hexagonal.app.demo.customer.domain.model.vo.CustomerId;
 import com.example.hexagonal.app.demo.customer.domain.model.vo.Email;
 
-import java.util.NoSuchElementException;
 import java.util.Objects;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Use case: change customer's email.
@@ -15,7 +17,10 @@ import java.util.Objects;
  *
  * NOTE: Requires a domain method in AR: Customer.changeEmail(Email newEmail).
  */
-public final class UpdateCustomerEmailService {
+import com.example.hexagonal.app.demo.customer.application.ports.in.UpdateCustomerEmailUseCase;
+
+@Transactional
+public class UpdateCustomerEmailService implements UpdateCustomerEmailUseCase {
 
     private final CustomerRepository customerRepository;
 
@@ -28,7 +33,7 @@ public final class UpdateCustomerEmailService {
         Email newEmail = Email.of(command.newEmail());
 
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Customer not found: " + id.asLong()));
+                .orElseThrow(() -> new CustomerNotFoundException(id.asLong()));
 
         // If email is unchanged, short-circuit
         if (customer.email().asString().equals(newEmail.asString())) {
@@ -36,7 +41,7 @@ public final class UpdateCustomerEmailService {
         }
 
         if (customerRepository.existsByEmail(newEmail)) {
-            throw new IllegalStateException("Email already in use: " + newEmail.asString());
+            throw new EmailAlreadyInUseException(newEmail.asString());
         }
 
         // Requires AR behavior; we lo keep explicit in the domain
